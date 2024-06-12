@@ -1,6 +1,6 @@
 # Importing useful libraries
 import openpyxl
-from openpyxl.styles import PatternFill
+from openpyxl.styles import PatternFill, Font
 import pandas as pd
 import numpy as np
 from io import BytesIO
@@ -10,9 +10,18 @@ from io import BytesIO
 def format_sheet(sheet):
     # Color the first row black
     black_fill = PatternFill(start_color="000000", end_color="000000", fill_type="solid")
+    white_bold_font = Font(color="FFFFFF", bold=True)
+
     for cell in sheet[1]:
         cell.fill = black_fill
-        cell.font = openpyxl.styles.Font(color="FFFFFF")  # Change font color to white for readability
+        cell.font = white_bold_font # Change font color to white for readability
+
+    # Coloring the cell containing the total data
+    for row in sheet.iter_rows():
+        for cell in row:
+            if cell.value == 'Total':
+                cell.fill = black_fill
+                cell.font = white_bold_font
 
     # Adjust column widths to fit the contents
     for col in sheet.columns:
@@ -137,6 +146,23 @@ def generate_report(input_data_path,save_path):
         for id in list(set(sub_ids)):
 
             grouped_dfs.append(temp_df[temp_df['Publisher'] == id])
+
+            total_leads = temp_df[temp_df['Publisher'] == id]['Leads'].sum()
+            total_revenue = temp_df[temp_df['Publisher'] == id]['Revenue'].sum()
+            total_clicks = temp_df[temp_df['Publisher'] == id]['Clicks/Views'].sum()
+            total_cost = temp_df[temp_df['Publisher'] == id]['We Pay'].sum()
+
+            try:
+                total_margin = f'{round(((total_revenue - total_cost) / total_revenue)*100,0)}%'
+            except:
+                total_margin = '0.0%'
+
+            total_data = ['','','Total',total_leads,total_revenue,total_clicks,total_cost,total_margin]
+
+            total_data_df = pd.DataFrame([total_data],
+                                         columns=temp_df.columns)
+
+            grouped_dfs.append(total_data_df) 
 
             grouped_dfs.append(blank_row)
 
