@@ -46,11 +46,19 @@ def generate_report(input_data_path,save_path):
     for sheet_name, sheet_df in xls.items():
         data_frames[sheet_name] = sheet_df
 
-    cut_off_1 = data_frames[list(data_frames.keys())[0]][data_frames[list(data_frames.keys())[0]]['Campaign'] == 'Publisher Name'].index[0]
-    temp_df = data_frames[list(data_frames.keys())[0]].iloc[cut_off_1:]
-    cut_off_2 = temp_df[temp_df['Campaign'].isna() == True].index[0]
-    campaigns = list(set(list(data_frames[list(data_frames.keys())[0]].iloc[cut_off_1:cut_off_2]['Campaign'].values)))
-    campaigns.remove('Publisher Name')
+    list_of_campaigns = []
+
+    for key in data_frames.keys():
+
+        cut_off_1 = data_frames[key][data_frames[key]['Campaign'] == 'Publisher Name'].index[0]
+        temp_df = data_frames[key].iloc[cut_off_1:]
+        cut_off_2 = temp_df[temp_df['Campaign'].isna() == True].index[0]
+        campaigns = list(set(list(data_frames[key].iloc[cut_off_1:cut_off_2]['Campaign'].values)))
+        campaigns.remove('Publisher Name')
+
+        list_of_campaigns += campaigns
+
+    campaigns = list(set(list_of_campaigns))
 
     report_data = {
 
