@@ -179,7 +179,18 @@ def generate_report(input_data_path,save_path):
 
         final_report_df[key] = temp_df
 
+    # Step 2: Sort the keys
+    sorted_keys = sorted(final_report_df.keys())
+
+    # Step 3: Create a new dictionary with sorted keys
+    sorted_dict = {key: final_report_df[key] for key in sorted_keys}
+
+    # Print the sorted dictionary
+    print(sorted_dict)
+
     excel_path = save_path
+
+    final_report_df = sorted_dict
 
     # Create an Excel file with multiple sheets
     with pd.ExcelWriter(excel_path) as writer:
@@ -213,3 +224,4 @@ def generate_excel_file(dataframes):
             format_sheet(worksheet)
     output.seek(0)  # Move the cursor back to the start of the BytesIO object
     return output
+
