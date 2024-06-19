@@ -185,9 +185,6 @@ def generate_report(input_data_path,save_path):
     # Step 3: Create a new dictionary with sorted keys
     sorted_dict = {key: final_report_df[key] for key in sorted_keys}
 
-    # Print the sorted dictionary
-    print(sorted_dict)
-
     excel_path = save_path
 
     final_report_df = sorted_dict
